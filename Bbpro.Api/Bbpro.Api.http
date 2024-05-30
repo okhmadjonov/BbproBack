@@ -1,0 +1,6 @@
+@Bbpro.Api_HostAddress = http://localhost:5122
+
+GET {{Bbpro.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
