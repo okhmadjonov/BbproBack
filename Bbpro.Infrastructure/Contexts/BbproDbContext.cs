@@ -1,4 +1,6 @@
-﻿using Bbpro.Domain.Entities.Latests;
+﻿using Bbpro.Domain.Entities.About;
+using Bbpro.Domain.Entities.Brands;
+using Bbpro.Domain.Entities.Latests;
 using Bbpro.Domain.Entities.MainContact;
 using Bbpro.Domain.Entities.Projects;
 using Bbpro.Domain.Entities.Solutions;
@@ -19,6 +21,10 @@ public class BbproDbContext : DbContext
     public DbSet<Solution> Solutions { get; set; }
     public DbSet<Project> Projects { get; set; }
 
+    public DbSet<About> Abouts { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
@@ -28,6 +34,7 @@ public class BbproDbContext : DbContext
 
         /*------------------------------Language Configurations--------------------------------*/
 
+        AboutLanguageConfig.Configure(modelBuilder);
         ContactLanguageConfig.Configure(modelBuilder);
         SolutionLanguageConfig.Configure(modelBuilder);
         ProjectLanguageConfig.Configure(modelBuilder);

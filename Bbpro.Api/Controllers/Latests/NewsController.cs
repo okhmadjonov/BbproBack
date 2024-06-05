@@ -12,10 +12,10 @@ namespace Bbpro.Api.Controllers.Latests;
 
 [Route("customapi/[controller]")]
 [ApiController]
-public sealed class LatestController : ControllerBase
+public sealed class NewsController : ControllerBase
 {
     private readonly ILatestRepository _latestRepository;
-    public LatestController(ILatestRepository latestRepository)
+    public NewsController(ILatestRepository latestRepository)
     {
         _latestRepository = latestRepository;
     }
@@ -27,7 +27,7 @@ public sealed class LatestController : ControllerBase
       => ResponseHandler.ReturnResponseList(await _latestRepository.GetAll(@params));
 
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<LatestModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> CreateAsync([FromForm] LatestCreateDto latestCreateDTO)
@@ -35,7 +35,7 @@ public sealed class LatestController : ControllerBase
 
 
     [HttpDelete("{id}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> DeleteAsync([FromRoute] int id)
@@ -50,7 +50,7 @@ public sealed class LatestController : ControllerBase
 
 
     [HttpPut]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<LatestModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> UpdateAsync(int id, [FromForm] LatestUpdateDto latestUpdateDTO)

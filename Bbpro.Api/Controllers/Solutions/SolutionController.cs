@@ -20,7 +20,6 @@ public sealed class SolutionController : ControllerBase
         _solutionRepository = solutionRepository;
     }
 
-
     [HttpGet]
     [ProducesResponseType(typeof(ResponseModel<SolutionModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
@@ -28,7 +27,7 @@ public sealed class SolutionController : ControllerBase
       => ResponseHandler.ReturnResponseList(await _solutionRepository.GetAll(@params));
 
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<SolutionModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> CreateAsync([FromForm] SolutionCreateDto solutionCreateDTO)
@@ -36,7 +35,7 @@ public sealed class SolutionController : ControllerBase
 
 
     [HttpDelete("{id}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> DeleteAsync([FromRoute] int id)
@@ -51,7 +50,7 @@ public sealed class SolutionController : ControllerBase
 
 
     [HttpPut]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<SolutionModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> UpdateAsync(int id, [FromForm] SolutionUpdateDto solutionUpdateDTO)

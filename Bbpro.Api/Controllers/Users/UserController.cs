@@ -32,7 +32,7 @@ public sealed class UsersController : ControllerBase
        => ResponseHandler.ReturnResponseList(await _userRepository.GetAll(@params));
 
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<UserModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> CreateAsync(UserForCreationDto user)
@@ -48,7 +48,7 @@ public sealed class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> DeleteAsync([FromRoute] int id)
@@ -61,7 +61,7 @@ public sealed class UsersController : ControllerBase
         => ResponseHandler.ReturnIActionResponse(await _userRepository.GetAsync(u => u.Id == id));
 
     [HttpPut]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<UserModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> UpdateAsync(int id, UserForCreationDto userForUpdateDTO)

@@ -24,14 +24,14 @@ public sealed class ContactController : ControllerBase
     => ResponseHandler.ReturnResponseList(await _contactRepository.GetAll(@params));
 
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<ContactModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> CreateAsync([FromBody] ContactCreateDto contactCreateDto)
         => ResponseHandler.ReturnIActionResponse(await _contactRepository.CreateAsync(contactCreateDto));
 
     [HttpDelete("{id}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> DeleteAsync([FromRoute] int id)
@@ -46,7 +46,7 @@ public sealed class ContactController : ControllerBase
 
 
     [HttpPut]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<ContactModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> UpdateAsync(int id, [FromBody] ContactUpdateDto contactForUpdateDTO)

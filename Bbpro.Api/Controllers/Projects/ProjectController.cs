@@ -31,7 +31,7 @@ public sealed class ProjectController : ControllerBase
       => ResponseHandler.ReturnResponseList(await _projectRepository.GetAll(@params));
 
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<ProjectModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> CreateAsync([FromForm] ProjectCreateDto projectCreateDTO)
@@ -39,7 +39,7 @@ public sealed class ProjectController : ControllerBase
 
 
     [HttpDelete("{id}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> DeleteAsync([FromRoute] int id)
@@ -54,7 +54,7 @@ public sealed class ProjectController : ControllerBase
 
 
     [HttpPut]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<ProjectModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> UpdateAsync(int id, [FromForm] ProjectUpdateDto projectUpdateDTO)
