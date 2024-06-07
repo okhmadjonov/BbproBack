@@ -1,5 +1,6 @@
 ﻿using Bbpro.Domain.Configurations;
 using Bbpro.Domain.Dto.Solutions;
+using Bbpro.Domain.Models.Projects;
 using Bbpro.Domain.Models.Response;
 using Bbpro.Domain.Models.Solutions;
 using Bbpro.Service.Extentions;
@@ -25,6 +26,15 @@ public sealed class SolutionController : ControllerBase
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> GetAll([FromQuery] PaginationParams @params)
       => ResponseHandler.ReturnResponseList(await _solutionRepository.GetAll(@params));
+
+    [HttpGet("solutions-by-categoryid")]
+    [ProducesResponseType(typeof(ResponseModel<SolutionModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
+    public async ValueTask<IActionResult> GetByCategoryId([FromQuery] PaginationParams @params, int id)
+    {
+        var result = await _solutionRepository.GetSolutionsByCategoryId(@params, id);
+        return ResponseHandler.ReturnIActionResponse(result);
+    }
 
     [HttpPost]
     [Authorize]

@@ -8,4 +8,5 @@ public class SolutionUpdateDto
     public IFormFile ImageUrl { get; set; }
     public Language Title { get; set; }
     public Language Description { get; set; }
+    public int CategoryId { get; set; }
 }

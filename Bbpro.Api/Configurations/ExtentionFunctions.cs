@@ -1,6 +1,7 @@
 ﻿using Bbpro.Api.ActionFilters;
 using Bbpro.Domain.Entities.About;
 using Bbpro.Domain.Entities.Brands;
+using Bbpro.Domain.Entities.Categories;
 using Bbpro.Domain.Entities.Latests;
 using Bbpro.Domain.Entities.MainContact;
 using Bbpro.Domain.Entities.Projects;
@@ -33,6 +34,9 @@ public static class ExtentionFunctions
         services.AddScoped<IGenericRepository<Contact>, GenericRepository<Contact>>();
         services.AddScoped<IGenericRepository<About>, GenericRepository<About>>();
         services.AddScoped<IGenericRepository<Brand>, GenericRepository<Brand>>();
+        services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
+        services.AddScoped<IGenericRepository<CategoryConnectSolution>, GenericRepository<CategoryConnectSolution>>();
+
 
         return services;
     }

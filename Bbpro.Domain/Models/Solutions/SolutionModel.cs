@@ -11,8 +11,9 @@ public class SolutionModel
     public Language Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public int CategoryId { get; set; }
 
-    public virtual SolutionModel MapFromEntity(Solution entity)
+    public virtual SolutionModel MapFromEntity(Solution entity, int categoryId)
     {
         return new SolutionModel
         {
@@ -21,7 +22,8 @@ public class SolutionModel
             Title = entity.Title,
             Description = entity.Description,
             CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt
+            UpdatedAt = entity.UpdatedAt,
+            CategoryId = categoryId
         };
     }
 }

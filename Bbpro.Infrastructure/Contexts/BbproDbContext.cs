@@ -1,5 +1,6 @@
 ﻿using Bbpro.Domain.Entities.About;
 using Bbpro.Domain.Entities.Brands;
+using Bbpro.Domain.Entities.Categories;
 using Bbpro.Domain.Entities.Latests;
 using Bbpro.Domain.Entities.MainContact;
 using Bbpro.Domain.Entities.Projects;
@@ -16,6 +17,9 @@ public class BbproDbContext : DbContext
     { }
 
 
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<CategoryConnectSolution> CategoryConnectSolution { get; set; }
+
     public DbSet<Contact> Contacts { get; set; }
     public DbSet<Latest> Latests { get; set; }
     public DbSet<Solution> Solutions { get; set; }
@@ -30,6 +34,17 @@ public class BbproDbContext : DbContext
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+
+        modelBuilder.Entity<Category>()
+         .HasMany(x => x.Solutions)
+         .WithOne(y => y.Category)
+         .HasForeignKey(y => y.CategoryId);
+
+        modelBuilder.Entity<Solution>()
+            .HasMany<CategoryConnectSolution>()
+            .WithOne(t => t.Solution)
+            .HasForeignKey(t => t.SolutionId);
+
 
 
         /*------------------------------Language Configurations--------------------------------*/

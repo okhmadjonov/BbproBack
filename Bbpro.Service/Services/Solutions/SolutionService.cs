@@ -1,9 +1,12 @@
 ﻿using Bbpro.Domain.Configurations;
 using Bbpro.Domain.Dto.Solutions;
+using Bbpro.Domain.Entities.Categories;
 using Bbpro.Domain.Entities.Latests;
 using Bbpro.Domain.Entities.Solutions;
 using Bbpro.Domain.Interface;
 using Bbpro.Domain.Models.Latests;
+using Bbpro.Domain.Models.PaginationParams;
+using Bbpro.Domain.Models.Projects;
 using Bbpro.Domain.Models.Solutions;
 using Bbpro.Service.Exceptions;
 using Bbpro.Service.Extentions;
@@ -17,34 +20,51 @@ namespace Bbpro.Service.Services.Solutions;
 internal sealed class SolutionService : ISolutionRepository
 {
     private readonly IGenericRepository<Solution> _solutionRepository;
-
-    public SolutionService(IGenericRepository<Solution> solutionRepository)
+    private readonly IGenericRepository<Category> _categoryRepository;
+    private readonly IGenericRepository<CategoryConnectSolution> _categoryConnectSolutionRepository;
+    public SolutionService(IGenericRepository<Solution> solutionRepository, IGenericRepository<CategoryConnectSolution> categoryConnectSolutionRepository, IGenericRepository<Category> categoryRepository)
     {
         _solutionRepository = solutionRepository;
+        _categoryRepository = categoryRepository;
+        _categoryConnectSolutionRepository = categoryConnectSolutionRepository;
     }
 
-    public async ValueTask<SolutionModel> CreateAsync(SolutionCreateDto solution)
+    public async ValueTask<SolutionModel> CreateAsync(SolutionCreateDto solutionDto)
     {
-        string fileName = Path.Combine("images", Guid.NewGuid().ToString("N") + Path.GetExtension(solution.ImageUrl.FileName));
+        string fileName = Path.Combine("images", Guid.NewGuid().ToString("N") + Path.GetExtension(solutionDto.ImageUrl.FileName));
         string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
         string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
         if (!Directory.Exists(directoryPath))
             Directory.CreateDirectory(directoryPath);
         using (var fileStream = new FileStream(filePath, FileMode.Create))
         {
-            await solution.ImageUrl.CopyToAsync(fileStream);
+            await solutionDto.ImageUrl.CopyToAsync(fileStream);
         }
-        var addSolution = new Solution
+        var solution = new Solution
         {
-            Title = solution.Title,
-            Description = solution.Description,
+            Title = solutionDto.Title,
+            Description = solutionDto.Description,
             ImageUrl = fileName,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
-        var createdSolution = await _solutionRepository.CreateAsync(addSolution);
+        var createdSolution = await _solutionRepository.CreateAsync(solution);
         await _solutionRepository.SaveChangesAsync();
-        return new SolutionModel().MapFromEntity(createdSolution);
+        var getCategoryById = await _categoryRepository.GetAsync(c => c.Id == solutionDto.CategoryId);
+        if (getCategoryById == null)
+        {
+            throw new BbproException(404, "category_not_found");
+        }
+
+        var solutionAddCategory = new CategoryConnectSolution
+        {
+            SolutionId = solution.Id,
+            CategoryId = getCategoryById.Id,
+        };
+        await _categoryConnectSolutionRepository.CreateAsync(solutionAddCategory);
+        await _solutionRepository.SaveChangesAsync();
+
+        return new SolutionModel().MapFromEntity(createdSolution, getCategoryById.Id);
     }
 
     public async ValueTask<bool> DeleteAsync(int id)
@@ -73,7 +93,22 @@ internal sealed class SolutionService : ISolutionRepository
     {
         var solutions = _solutionRepository.GetAll(expression: expression, isTracking: false);
         var solutionsList = await solutions.ToPagedList(@params).ToListAsync();
-        return solutionsList.Select(e => new SolutionModel().MapFromEntity(e)).ToList();
+        var solutionModels = new List<SolutionModel>();
+
+        foreach (var solution in solutionsList)
+        {
+            var categoryId = await _categoryConnectSolutionRepository.GetAsync(ccp => ccp.SolutionId == solution.Id);
+
+            if (categoryId == null)
+            {
+                continue;
+            }
+
+            var solutionModel = new SolutionModel().MapFromEntity(solution, categoryId.CategoryId);
+            solutionModels.Add(solutionModel);
+        }
+
+        return solutionModels;
     }
 
     public async ValueTask<SolutionModel> GetAsync(Expression<Func<Solution, bool>> expression)
@@ -81,7 +116,11 @@ internal sealed class SolutionService : ISolutionRepository
         var solution = await _solutionRepository.GetAsync(expression, false);
         if (solution is null)
             throw new BbproException(404, "solution_not_found");
-        return new SolutionModel().MapFromEntity(solution);
+        var categoryId = await _categoryConnectSolutionRepository.GetAsync(ccp => ccp.SolutionId == solution.Id);
+        if (categoryId == null)
+            throw new BbproException(404, "category_not_found");
+
+        return new SolutionModel().MapFromEntity(solution, categoryId.CategoryId);
     }
 
     public async ValueTask<SolutionModel> UpdateAsync(int id, SolutionUpdateDto solutionUpdateDTO)
@@ -151,8 +190,78 @@ internal sealed class SolutionService : ISolutionRepository
 
             existingSolution.ImageUrl = fileName;
         }
+        var checkCategory = await _categoryRepository.GetAsync(c => c.Id == solutionUpdateDTO.CategoryId);
+        if (checkCategory == null)
+        {
+            throw new BbproException(404, "category_is_not_found");
+        }
 
+        var getSolutionRelation = await _categoryConnectSolutionRepository.GetAsync(ccp => ccp.SolutionId == existingSolution.Id);
+        getSolutionRelation.CategoryId = solutionUpdateDTO.CategoryId;
+        _categoryConnectSolutionRepository.Update(getSolutionRelation);
+
+        _solutionRepository.Update(existingSolution);
         await _solutionRepository.SaveChangesAsync();
-        return new SolutionModel().MapFromEntity(existingSolution);
+        return new SolutionModel().MapFromEntity(existingSolution, checkCategory.Id);
     }
+
+
+    public async ValueTask<PagedResult<SolutionFilterCategoryModel>> GetSolutionsByCategoryId(PaginationParams @params, int categoryId)
+    {
+       
+        Solution solution;
+        var solutionsQuery = _categoryConnectSolutionRepository.GetAll(ccp => ccp.CategoryId == categoryId)
+                                                             .Include(ccp => ccp.Solution)
+                                                             .AsQueryable();
+
+        var solutionsList = await solutionsQuery.ToPagedList(@params).ToListAsync();
+
+        var resultList = new List<SolutionFilterCategoryModel>();
+
+        foreach (var solutionCategory in solutionsList)
+        {
+            solution = solutionCategory.Solution;
+         
+            var result = new SolutionFilterCategoryModel().MapFromEntity(solution);
+
+            resultList.Add(result);
+        }
+
+        int totalCount = await solutionsQuery.CountAsync();
+        if (totalCount == 0)
+        {
+            return PagedResult<SolutionFilterCategoryModel>.Create(
+                Enumerable.Empty<SolutionFilterCategoryModel>(),
+                0,
+                @params.PageSize,
+                0,
+                @params.PageIndex,
+                0
+            );
+        }
+        if (@params.PageIndex == 0)
+        {
+            @params.PageIndex = 1;
+        }
+
+        if (@params.PageSize == 0)
+        {
+            @params.PageSize = totalCount;
+        }
+
+        int itemsPerPage = @params.PageSize;
+        int totalPages = (totalCount / itemsPerPage) + (totalCount % itemsPerPage == 0 ? 0 : 1);
+
+
+        var pagedResult = PagedResult<SolutionFilterCategoryModel>.Create(resultList,
+                totalCount,
+                itemsPerPage,
+                resultList.Count,
+                @params.PageIndex,
+                totalPages
+                );
+
+        return pagedResult;
+    }
+
 }

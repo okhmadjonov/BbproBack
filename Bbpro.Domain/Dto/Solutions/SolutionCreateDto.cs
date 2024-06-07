@@ -12,4 +12,6 @@ public class SolutionCreateDto
     public Language Title { get; set; }
     [Required]
     public Language Description { get; set; }
+    [Required]
+    public int CategoryId { get; set; }
 }
