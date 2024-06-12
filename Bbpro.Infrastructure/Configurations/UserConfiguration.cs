@@ -19,7 +19,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         {
             Id = 1,
             Username = "Admin",
-            Email = "admin@gmail.com",
+            Email = "bigboxpro@gmail.com",
             Phonenumber = "+99898 000 00 00",
             Password = "Admin@123?".Encrypt(),
             CreatedAt = new DateTime(2024, 5, 30, 16, 13, 56, 461, DateTimeKind.Utc),

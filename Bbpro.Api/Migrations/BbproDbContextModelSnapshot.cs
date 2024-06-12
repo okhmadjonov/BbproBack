@@ -80,10 +80,6 @@ namespace Bbpro.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -339,7 +335,7 @@ namespace Bbpro.Api.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2024, 5, 30, 16, 13, 56, 461, DateTimeKind.Utc),
-                            Email = "admin@gmail.com",
+                            Email = "bigboxpro@gmail.com",
                             Password = "6230ed845243cc96e03127a483eaed5783a0ccdb4760473a1f5dc0f617d9241d",
                             Phonenumber = "+99898 000 00 00",
                             UpdatedAt = new DateTime(2024, 5, 30, 16, 13, 56, 461, DateTimeKind.Utc),
@@ -407,6 +403,40 @@ namespace Bbpro.Api.Migrations
 
                     b.Navigation("Description")
                         .IsRequired();
+
+                    b.Navigation("Title")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bbpro.Domain.Entities.Categories.Category", b =>
+                {
+                    b.OwnsOne("Bbpro.Domain.Entities.Multilanguage.Language", "Title", b1 =>
+                        {
+                            b1.Property<int>("CategoryId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("EN")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Title_EN");
+
+                            b1.Property<string>("RU")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Title_RU");
+
+                            b1.Property<string>("UZ")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Title_UZ");
+
+                            b1.HasKey("CategoryId");
+
+                            b1.ToTable("Categories");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CategoryId");
+                        });
 
                     b.Navigation("Title")
                         .IsRequired();

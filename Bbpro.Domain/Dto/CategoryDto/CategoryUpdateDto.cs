@@ -1,6 +1,8 @@
-﻿namespace Bbpro.Domain.Dto.CategoryDto;
+﻿using Bbpro.Domain.Entities.Multilanguage;
+
+namespace Bbpro.Domain.Dto.CategoryDto;
 
 public class CategoryUpdateDto
 {
-    public string Title { get; set; }
+    public Language Title { get; set; }
 }

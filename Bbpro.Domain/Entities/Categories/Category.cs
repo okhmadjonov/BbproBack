@@ -5,6 +5,6 @@ namespace Bbpro.Domain.Entities.Categories;
 
 public class Category : Auditable
 {
-    public string Title { get; set; }
+    public Language Title { get; set; }
     public List<CategoryConnectSolution> Solutions { get; set; }
 }

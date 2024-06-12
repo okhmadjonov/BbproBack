@@ -54,5 +54,6 @@ public class BbproDbContext : DbContext
         SolutionLanguageConfig.Configure(modelBuilder);
         ProjectLanguageConfig.Configure(modelBuilder);
         LatestLanguageConfig.Configure(modelBuilder);
+        CategoryLanguageConfig.Configure(modelBuilder);
     }
 }

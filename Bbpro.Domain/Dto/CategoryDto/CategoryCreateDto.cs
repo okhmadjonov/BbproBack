@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bbpro.Domain.Entities.Multilanguage;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bbpro.Domain.Dto.CategoryDto;
 
 public class CategoryCreateDto
 {
     [Required]
-    public string Title { get; set; }
+    public Language Title { get; set; }
 }

@@ -9,9 +9,9 @@ namespace Bbpro.Domain.Models.Categories;
 public class CategoryModel
 {
     public int Id { get; set; }
-    public string Title { get; set; }
+    public Language Title { get; set; }
     public string ImageUrl { get; set; }
-    //public List<SolutionModel> Solutions { get; set; }
+   
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

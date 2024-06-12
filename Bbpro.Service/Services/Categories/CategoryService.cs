@@ -80,9 +80,18 @@ public class CategoryService : ICategoryRepository
 
         if (categoryDto.Title != null)
         {
-           
-                existingCategory.Title = categoryDto.Title;
-         
+            if (categoryDto.Title.EN != null)
+            {
+                existingCategory.Title.EN = categoryDto.Title.EN;
+            }
+            if (categoryDto.Title.RU != null)
+            {
+                existingCategory.Title.RU = categoryDto.Title.RU;
+            }
+            if (categoryDto.Title.UZ != null)
+            {
+                existingCategory.Title.UZ = categoryDto.Title.UZ;
+            }
         }
 
         existingCategory.UpdatedAt = DateTime.UtcNow;
