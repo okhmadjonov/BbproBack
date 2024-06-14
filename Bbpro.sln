@@ -5,13 +5,13 @@ VisualStudioVersion = 17.10.34707.107
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0301444B-583B-4231-93C8-B8737F4D0ECD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbpro.Api", "Bbpro.Api\Bbpro.Api.csproj", "{AC74F40F-4424-4066-8770-8820D79CF40A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbpro.Api", "Bbpro.Api\Bbpro.Api.csproj", "{AC74F40F-4424-4066-8770-8820D79CF40A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbpro.Service", "Bbpro.Service\Bbpro.Service.csproj", "{4A6EED3F-2E7D-4B87-906B-A127D9BB0F3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbpro.Service", "Bbpro.Service\Bbpro.Service.csproj", "{4A6EED3F-2E7D-4B87-906B-A127D9BB0F3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbpro.Domain", "Bbpro.Domain\Bbpro.Domain.csproj", "{593837D2-25A1-45AB-8AF2-4B70A10F004E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbpro.Domain", "Bbpro.Domain\Bbpro.Domain.csproj", "{593837D2-25A1-45AB-8AF2-4B70A10F004E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbpro.Infrastructure", "Bbpro.Infrastructure\Bbpro.Infrastructure.csproj", "{DAA08286-611A-4E83-BA2B-65C581B13A8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbpro.Infrastructure", "Bbpro.Infrastructure\Bbpro.Infrastructure.csproj", "{DAA08286-611A-4E83-BA2B-65C581B13A8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
