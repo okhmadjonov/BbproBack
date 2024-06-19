@@ -7,6 +7,7 @@ using Bbpro.Service.Interfaces.Brands;
 using Bbpro.Service.Interfaces.Categories;
 using Bbpro.Service.Interfaces.Contacts;
 using Bbpro.Service.Interfaces.Latests;
+using Bbpro.Service.Interfaces.Orders;
 using Bbpro.Service.Interfaces.Projects;
 using Bbpro.Service.Interfaces.Solutions;
 using Bbpro.Service.Interfaces.Tokens;
@@ -17,6 +18,7 @@ using Bbpro.Service.Services.Brands;
 using Bbpro.Service.Services.Categories;
 using Bbpro.Service.Services.Contacts;
 using Bbpro.Service.Services.Latests;
+using Bbpro.Service.Services.Orders;
 using Bbpro.Service.Services.Projects;
 using Bbpro.Service.Services.Solutions;
 using Bbpro.Service.Services.Tokens;
@@ -41,6 +43,7 @@ public static class AddExtensionServices
         services.AddScoped<IContactRepository, ContactService>();
         services.AddScoped<IAboutRepository, AboutService>();
         services.AddScoped<IBrandRepository, BrandService>();
+        services.AddScoped<IOrderRepository, OrderService>();
         return services;
     }
 }

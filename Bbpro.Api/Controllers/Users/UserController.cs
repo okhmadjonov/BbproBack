@@ -1,4 +1,5 @@
-﻿using Bbpro.Api.FluentValidation;
+﻿
+using Bbpro.Api.FluentValidation;
 using Bbpro.Domain.Configurations;
 using Bbpro.Domain.Dto.Users;
 using Bbpro.Domain.Models.Response;

@@ -3,6 +3,7 @@ using Bbpro.Domain.Entities.Brands;
 using Bbpro.Domain.Entities.Categories;
 using Bbpro.Domain.Entities.Latests;
 using Bbpro.Domain.Entities.MainContact;
+using Bbpro.Domain.Entities.Orders;
 using Bbpro.Domain.Entities.Projects;
 using Bbpro.Domain.Entities.Solutions;
 using Bbpro.Infrastructure.Configurations;
@@ -27,6 +28,7 @@ public class BbproDbContext : DbContext
 
     public DbSet<About> Abouts { get; set; }
     public DbSet<Brand> Brands { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
