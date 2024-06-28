@@ -1,20 +1,15 @@
-﻿using Bbpro.Api.FluentValidation;
-using Bbpro.Domain.Configurations;
+﻿using Bbpro.Domain.Configurations;
 using Bbpro.Domain.Dto.OrdersDto;
-using Bbpro.Domain.Dto.Users;
 using Bbpro.Domain.Models.Orders;
 using Bbpro.Domain.Models.Response;
-using Bbpro.Domain.Models.Users;
 using Bbpro.Service.Extentions;
-using Bbpro.Service.Interfaces.Auths;
 using Bbpro.Service.Interfaces.Orders;
-using Bbpro.Service.Interfaces.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bbpro.Api.Controllers.Orders;
 
-[Route("api/[controller]")]
+[Route("customapi/[controller]")]
 [ApiController]
 public class OrderController : ControllerBase
 {
@@ -32,7 +27,6 @@ public class OrderController : ControllerBase
      => ResponseHandler.ReturnResponseList(await _orderRepository.GetAll(@params));
 
     [HttpPost]
-    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<OrderModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> CreateAsync(OrderCreateDto order)
@@ -41,7 +35,6 @@ public class OrderController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize]
     [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> DeleteAsync([FromRoute] int id)
