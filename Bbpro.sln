@@ -13,6 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbpro.Domain", "Bbpro.Domai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbpro.Infrastructure", "Bbpro.Infrastructure\Bbpro.Infrastructure.csproj", "{DAA08286-611A-4E83-BA2B-65C581B13A8B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solutionsitem", "solutionsitem", "{4D99C0FD-AC4E-4B80-9CBE-33473B03462F}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +49,7 @@ Global
 		{4A6EED3F-2E7D-4B87-906B-A127D9BB0F3F} = {0301444B-583B-4231-93C8-B8737F4D0ECD}
 		{593837D2-25A1-45AB-8AF2-4B70A10F004E} = {0301444B-583B-4231-93C8-B8737F4D0ECD}
 		{DAA08286-611A-4E83-BA2B-65C581B13A8B} = {0301444B-583B-4231-93C8-B8737F4D0ECD}
+		{4D99C0FD-AC4E-4B80-9CBE-33473B03462F} = {0301444B-583B-4231-93C8-B8737F4D0ECD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8216F5D9-D7DD-42CB-A4FF-17C2CF1DC761}
