@@ -1,4 +1,5 @@
 version: '3.4'
+
 services:
 
   traefik:
@@ -7,19 +8,19 @@ services:
       - "--log.level=DEBUG"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=true"
-      - "--entrypoints.web.address=:8081"
+      - "--entrypoints.web.address=:8080"  # Changed port to 8080
       - "--entrypoints.websecure.address=:8443"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--providers.file.directory=/etc/traefik/dynamic"
     ports:
-      - "8081:80"
+      - "8080:80"  # Expose Traefik on port 8080 on the host
       - "8443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /home/ubuntu/mycareer/src/traefik/certs:/etc/traefik/certs
-      - /home/ubuntu/mycareer/src/traefik/dynamic.yml:/etc/traefik/dynamic/traefik-dinamic-conf-v1.toml
+      - /home/ubuntu/mycareer/src/traefik/dynamic.yml:/etc/traefik/dynamic/traefik-dynamic-conf-v1.toml
     networks:
       - all_network  
     labels:
@@ -61,7 +62,7 @@ services:
       context: .
       dockerfile: Bbpro.Api/Dockerfile
     ports:
-      - "8081:80"
+      - "8081:80"  # Keep backend service on port 8081
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80  
@@ -73,7 +74,7 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=(Host(mycareer-dev.esynergy.lv) && ( PathPrefix(/swagger)  PathPrefix(`/images`)   PathPrefix(/media_folders)  PathPrefix(`/signin-google`)  PathPrefix(/signin-github)  PathPrefix(`/signin-facebook`)   PathPrefix(/api) ) )"
+      - "traefik.http.routers.backend.rule=(Host(mycareer-dev.esynergy.lv) && (PathPrefix(`/swagger`) || PathPrefix(`/images`) || PathPrefix(`/media_folders`) || PathPrefix(`/signin-google`) || PathPrefix(`/signin-github`) || PathPrefix(`/signin-facebook`) || PathPrefix(`/api`)))"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
