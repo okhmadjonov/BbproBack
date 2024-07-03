@@ -1,26 +1,26 @@
 version: '3.4'
-
 services:
 
   traefik:
     image: traefik:v2.6
-    command:
+    command: 
+   #   - --api.insecure=true
       - "--log.level=DEBUG"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=true"
-      - "--entrypoints.web.address=:8080"  # Changed port to 8080
-      - "--entrypoints.websecure.address=:8443"
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=true
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - "--providers.file.directory=/etc/traefik/dynamic"
+      - --providers.file.directory=/etc/traefik/dynamic      
     ports:
-      - "8080:80"  # Expose Traefik on port 8080 on the host
-      - "8443:443"
+      - "80:80"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /home/ubuntu/mycareer/src/traefik/certs:/etc/traefik/certs
-      - /home/ubuntu/mycareer/src/traefik/dynamic.yml:/etc/traefik/dynamic/traefik-dynamic-conf-v1.toml
+      - /home/ubuntu/mycareer/src/traefik/dynamic.yml:/etc/traefik/dynamic/traefik-dinamic-conf-v1.toml
     networks:
       - all_network  
     labels:
@@ -34,15 +34,14 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=bbpro
+      - POSTGRES_PASSWORD=web@1234
+      - POSTGRES_DB=myCareer
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - all_network
-
   maildev:
     image: maildev/maildev
     restart: always
@@ -56,16 +55,18 @@ services:
     networks:
       - all_network
 
+
+      
   backend:
     image: backend
     build:
       context: .
       dockerfile: Bbpro.Api/Dockerfile
     ports:
-      - "8081:80"  # Keep backend service on port 8081
+      - "8081:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80  
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
     networks:
       - all_network
     volumes:
@@ -73,21 +74,24 @@ services:
       - /home/ubuntu/app/logs:/app/Logs
     restart: always
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=(Host(mycareer-dev.esynergy.lv) && (PathPrefix(`/swagger`) || PathPrefix(`/images`) || PathPrefix(`/media_folders`) || PathPrefix(`/signin-google`) || PathPrefix(`/signin-github`) || PathPrefix(`/signin-facebook`) || PathPrefix(`/api`)))"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
-      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
-      - "traefik.http.routers.backend.middlewares=cors"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls=true"
+        - "traefik.enable=true"
+        - "traefik.http.routers.backend.rule=(Host(mycareer-dev.esynergy.lv) && ( PathPrefix(/swagger)  PathPrefix(`/images`)   PathPrefix(/media_folders)  PathPrefix(`/signin-google`)  PathPrefix(/signin-github)  PathPrefix(`/signin-facebook`)   PathPrefix(/api) ) )"
+        - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
+        - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
+        - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+        - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
+        - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+        - "traefik.http.routers.backend.middlewares=cors"
+        - "traefik.http.routers.backend.entrypoints=websecure"
+        - "traefik.http.routers.backend.tls=true"
+        # - "traefik.http.services.backend.loadbalancer.server.port=80"
+        # - "traefik.http.routers.backend.service=backend"
     depends_on:
-      - traefik
+        - traefik
 
 volumes:
   postgres-data:
+
 
 networks:
   all_network:
