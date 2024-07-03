@@ -8,5 +8,5 @@ public class Project: Auditable
     public string ImageUrl { get; set; }
     public Language Title { get; set; }
     public Language Description { get; set; }
-    public string DownloadLink { get; set; }
+    public Language DownloadLink { get; set; }
 }

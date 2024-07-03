@@ -12,7 +12,7 @@ public class ProjectModel
     public Language Title { get; set; }
     public Language Description { get; set; }
 
-    public string DownloadLink { get; set; }
+    public Language DownloadLink { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

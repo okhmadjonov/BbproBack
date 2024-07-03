@@ -89,8 +89,7 @@ internal sealed class ProjectService : IProjectRepository
             throw new BbproException(404, "project_not_found");
         }
 
-        existingProject.DownloadLink =project.DownloadLink;
-
+       
         if (project.Title != null)
         {
             if (project.Title.UZ is not null)
@@ -106,6 +105,29 @@ internal sealed class ProjectService : IProjectRepository
                 existingProject.Title.EN = project.Title.EN;
             }
         }
+        /*
+        if (project.DownloadLink != null)
+        {
+            if (project.DownloadLink.UZ is not null)
+            {
+                existingProject.Title.UZ = project.Title.UZ;
+            }
+            if (project.Title.RU is not null)
+            {
+                existingProject.Title.RU = project.Title.RU;
+            }
+            if (project.Title.EN is not null)
+            {
+                existingProject.Title.EN = project.Title.EN;
+            }
+        }
+        */
+
+
+
+
+
+
         if (project.Description != null)
         {
             if (project.Description.UZ is not null)

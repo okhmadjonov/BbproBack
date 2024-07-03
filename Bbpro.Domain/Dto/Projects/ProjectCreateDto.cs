@@ -13,5 +13,5 @@ public class ProjectCreateDto
     [Required]
     public Language Description { get; set; }
 
-    public string DownloadLink { get; set; } = string.Empty;
+    public Language? DownloadLink { get; set; }
 }

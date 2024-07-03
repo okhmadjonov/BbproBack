@@ -22,6 +22,12 @@ public class ProjectLanguageConfig
                 description.Property(d => d.UZ).HasColumnName("Description_UZ");
                 description.Property(d => d.EN).HasColumnName("Description_EN");
             });
+            entity.OwnsOne(s => s.DownloadLink, description =>
+            {
+                description.Property(d => d.RU).HasColumnName("DownloadLink_RU");
+                description.Property(d => d.UZ).HasColumnName("DownloadLink_UZ");
+                description.Property(d => d.EN).HasColumnName("DownloadLink_EN");
+            });
         });
     }
 }
