@@ -34,6 +34,7 @@ internal sealed class ProjectService : IProjectRepository
         {
             Title = project.Title,
             Description = project.Description,
+            DownloadLink = project.DownloadLink,
             ImageUrl = fileName,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -87,6 +88,8 @@ internal sealed class ProjectService : IProjectRepository
         {
             throw new BbproException(404, "project_not_found");
         }
+
+        existingProject.DownloadLink =project.DownloadLink;
 
         if (project.Title != null)
         {
@@ -146,6 +149,7 @@ internal sealed class ProjectService : IProjectRepository
             }
 
             existingProject.ImageUrl = fileName;
+           
         }
 
         await _projectRepository.SaveChangesAsync();
