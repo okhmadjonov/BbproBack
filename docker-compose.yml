@@ -19,8 +19,8 @@ services:
       - "8443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/ubuntu/mycareer/src/traefik/certs:/etc/traefik/certs
-      - /home/ubuntu/mycareer/src/traefik/dynamic.yml:/etc/traefik/dynamic/traefik-dinamic-conf-v1.toml
+      - /home/ubuntu/bbpro/src/traefik/certs:/etc/traefik/certs
+      - /home/ubuntu/bbpro/src/traefik/dynamic.yml:/etc/traefik/dynamic/traefik-dinamic-conf-v1.toml
     networks:
       - all_network  
     labels:
