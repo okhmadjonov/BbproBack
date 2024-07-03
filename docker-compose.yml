@@ -8,15 +8,15 @@ services:
       - "--log.level=DEBUG"
       - --providers.docker=true
       - --providers.docker.exposedbydefault=true
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.address=:8080"
+      - "--entrypoints.websecure.address=:8443"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - --providers.file.directory=/etc/traefik/dynamic      
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /home/ubuntu/mycareer/src/traefik/certs:/etc/traefik/certs
