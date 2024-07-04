@@ -105,28 +105,23 @@ internal sealed class ProjectService : IProjectRepository
                 existingProject.Title.EN = project.Title.EN;
             }
         }
-        /*
+        
         if (project.DownloadLink != null)
         {
             if (project.DownloadLink.UZ is not null)
             {
-                existingProject.Title.UZ = project.Title.UZ;
+                existingProject.DownloadLink.UZ = project.DownloadLink.UZ;
             }
-            if (project.Title.RU is not null)
+            if (project.DownloadLink.RU is not null)
             {
-                existingProject.Title.RU = project.Title.RU;
+                existingProject.DownloadLink.RU = project.DownloadLink.RU;
             }
-            if (project.Title.EN is not null)
+            if (project.DownloadLink.EN is not null)
             {
-                existingProject.Title.EN = project.Title.EN;
+                existingProject.DownloadLink.EN = project.DownloadLink.EN;
             }
         }
-        */
-
-
-
-
-
+        
 
         if (project.Description != null)
         {
