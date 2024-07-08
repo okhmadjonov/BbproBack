@@ -1,19 +1,19 @@
 version: '3.4'
+
 services:
 
   traefik:
     image: traefik:v2.6
     command: 
-   #   - --api.insecure=true
       - "--log.level=DEBUG"
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=true
-      - "--entrypoints.web.address=:8080"
-      - "--entrypoints.websecure.address=:8443"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - --providers.file.directory=/etc/traefik/dynamic      
+      - "--providers.file.directory=/etc/traefik/dynamic"
     ports:
       - "8080:80"
       - "8443:443"
@@ -42,6 +42,7 @@ services:
       - "5433:5432"
     networks:
       - all_network
+
   maildev:
     image: maildev/maildev
     restart: always
@@ -55,20 +56,16 @@ services:
     networks:
       - all_network
 
-
-      
   backend:
-    image: backend
     build:
       context: .
       dockerfile: Bbpro.Api/Dockerfile
     ports:
       - "8081:80"
     environment:
-        - ASPNETCORE_ENVIRONMENT=Development
-        - ASPNETCORE_URLS=http://+:80
-        - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Username=postgres;Password=postgres;Database=bbpro;Include Error Detail=true
- 
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Username=postgres;Password=web@1234;Database=bbpro;Include Error Detail=true
     networks:
       - all_network
     volumes:
@@ -76,24 +73,22 @@ services:
       - /home/ubuntu/app/logs:/app/Logs
     restart: always
     labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.backend.rule=(Host(mycareer-dev.esynergy.lv) && ( PathPrefix(/swagger)  PathPrefix(`/images`)   PathPrefix(/media_folders)  PathPrefix(`/signin-google`)  PathPrefix(/signin-github)  PathPrefix(`/signin-facebook`)   PathPrefix(/api) ) )"
-        - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
-        - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
-        - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
-        - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
-        - "traefik.http.middlewares.cors.headers.addvaryheader=true"
-        - "traefik.http.routers.backend.middlewares=cors"
-        - "traefik.http.routers.backend.entrypoints=websecure"
-        - "traefik.http.routers.backend.tls=true"
-        # - "traefik.http.services.backend.loadbalancer.server.port=80"
-        # - "traefik.http.routers.backend.service=backend"
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`192.168.100.155`) && (PathPrefix(`/swagger`) || PathPrefix(`/images`) || PathPrefix(`/media_folders`) || PathPrefix(`/signin-google`) || PathPrefix(`/signin-github`) || PathPrefix(`/signin-facebook`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+      - "traefik.http.routers.backend.middlewares=cors"
     depends_on:
-        - traefik
+      - traefik
+      - postgres
 
 volumes:
   postgres-data:
-
 
 networks:
   all_network:
