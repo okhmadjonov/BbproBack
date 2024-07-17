@@ -68,7 +68,8 @@ internal sealed class ProjectService : IProjectRepository
 
     public async ValueTask<IEnumerable<ProjectModel>> GetAll(PaginationParams @params, Expression<Func<Project, bool>> expression = null)
     {
-        var projects = _projectRepository.GetAll(expression: expression, isTracking: false);
+        var projects = _projectRepository.GetAll(expression: expression, isTracking: false)
+             .OrderByDescending(e => e.Id); 
         var projectsList = await projects.ToPagedList(@params).ToListAsync();
         return projectsList.Select(e => new ProjectModel().MapFromEntity(e)).ToList();
     }

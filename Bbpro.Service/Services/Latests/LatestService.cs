@@ -67,10 +67,17 @@ internal sealed class LatestService : ILatestRepository
 
     public async ValueTask<IEnumerable<LatestModel>> GetAll(PaginationParams @params, Expression<Func<Latest, bool>> expression = null)
     {
-        var latests = _latestRepository.GetAll(expression: expression, isTracking: false);
+      
+        var latests = _latestRepository.GetAll(expression: expression, isTracking: false)
+                              
+                                  .OrderByDescending(e => e.Id);
+
         var latestsList = await latests.ToPagedList(@params).ToListAsync();
         return latestsList.Select(e => new LatestModel().MapFromEntity(e)).ToList();
     }
+
+
+
 
     public async ValueTask<LatestModel> GetAsync(Expression<Func<Latest, bool>> expression)
     {

@@ -91,7 +91,8 @@ internal sealed class SolutionService : ISolutionRepository
 
     public async ValueTask<IEnumerable<SolutionModel>> GetAll(PaginationParams @params, Expression<Func<Solution, bool>> expression = null)
     {
-        var solutions = _solutionRepository.GetAll(expression: expression, isTracking: false);
+        var solutions = _solutionRepository.GetAll(expression: expression, isTracking: false)
+             .OrderByDescending(e => e.Id); 
         var solutionsList = await solutions.ToPagedList(@params).ToListAsync();
         var solutionModels = new List<SolutionModel>();
 
@@ -212,6 +213,7 @@ internal sealed class SolutionService : ISolutionRepository
         Solution solution;
         var solutionsQuery = _categoryConnectSolutionRepository.GetAll(ccp => ccp.CategoryId == categoryId)
                                                              .Include(ccp => ccp.Solution)
+                                                             .OrderByDescending(ccp=> ccp.Solution.Id)
                                                              .AsQueryable();
 
         var solutionsList = await solutionsQuery.ToPagedList(@params).ToListAsync();
