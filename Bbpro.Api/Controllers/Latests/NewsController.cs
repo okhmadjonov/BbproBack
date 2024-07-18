@@ -1,5 +1,4 @@
-﻿
-using Bbpro.Domain.Configurations;
+﻿using Bbpro.Domain.Configurations;
 using Bbpro.Domain.Dto.Latests;
 using Bbpro.Domain.Models.Latests;
 using Bbpro.Domain.Models.Response;
@@ -24,7 +23,7 @@ public sealed class NewsController : ControllerBase
     [ProducesResponseType(typeof(ResponseModel<LatestModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> GetAll([FromQuery] PaginationParams @params)
-      => ResponseHandler.ReturnResponseList(await _latestRepository.GetAll(@params));
+      => ResponseHandler.ReturnIActionResponse(await _latestRepository.GetAll(@params));
 
     [HttpPost]
     [Authorize]

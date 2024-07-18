@@ -255,15 +255,14 @@ internal sealed class SolutionService : ISolutionRepository
         int totalPages = (totalCount / itemsPerPage) + (totalCount % itemsPerPage == 0 ? 0 : 1);
 
 
-        var pagedResult = PagedResult<SolutionFilterCategoryModel>.Create(resultList,
+        var pagedResult = PagedResult<SolutionFilterCategoryModel>.Create(
+                resultList,
                 totalCount,
                 itemsPerPage,
                 resultList.Count,
                 @params.PageIndex,
                 totalPages
                 );
-
         return pagedResult;
     }
-
 }

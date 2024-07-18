@@ -3,6 +3,7 @@ using Bbpro.Domain.Dto.Latests;
 using Bbpro.Domain.Entities.Latests;
 using Bbpro.Domain.Interface;
 using Bbpro.Domain.Models.Latests;
+using Bbpro.Domain.Models.PaginationParams;
 using Bbpro.Service.Exceptions;
 using Bbpro.Service.Extentions;
 using Bbpro.Service.Interfaces.Latests;
@@ -64,7 +65,7 @@ internal sealed class LatestService : ILatestRepository
         await _latestRepository.SaveChangesAsync();
         return true;
     }
-
+    /*
     public async ValueTask<IEnumerable<LatestModel>> GetAll(PaginationParams @params, Expression<Func<Latest, bool>> expression = null)
     {
       
@@ -76,7 +77,55 @@ internal sealed class LatestService : ILatestRepository
         return latestsList.Select(e => new LatestModel().MapFromEntity(e)).ToList();
     }
 
+  */
+    
+    public async ValueTask<PagedResult<LatestModel>> GetAll(PaginationParams @params, Expression<Func<Latest, bool>> expression = null)
+    {
+        var latests = _latestRepository.GetAll(expression: expression, isTracking: false)
+                                       .OrderByDescending(e => e.Id)
+                                       .AsQueryable();
 
+        var latestsList = await latests.ToPagedList(@params).ToListAsync();
+
+        var resultList = latestsList.Select(e => new LatestModel().MapFromEntity(e)).ToList();
+
+        int totalCount = await latests.CountAsync();
+        if (totalCount == 0)
+        {
+            return PagedResult<LatestModel>.Create(
+                Enumerable.Empty<LatestModel>(),
+                0,
+                @params.PageSize,
+                0,
+                @params.PageIndex,
+                0
+            );
+        }
+        if (@params.PageIndex == 0)
+        {
+            @params.PageIndex = 1;
+        }
+
+        if (@params.PageSize == 0)
+        {
+            @params.PageSize = totalCount;
+        }
+
+        int itemsPerPage = @params.PageSize;
+        int totalPages = (totalCount / itemsPerPage) + (totalCount % itemsPerPage == 0 ? 0 : 1);
+
+        var pagedResult = PagedResult<LatestModel>.Create(
+            resultList,
+            totalCount,
+            itemsPerPage,
+            resultList.Count,
+            @params.PageIndex,
+            totalPages
+        );
+
+        return pagedResult;
+    }
+    
 
 
     public async ValueTask<LatestModel> GetAsync(Expression<Func<Latest, bool>> expression)

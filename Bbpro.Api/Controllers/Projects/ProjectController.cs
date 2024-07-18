@@ -28,7 +28,7 @@ public sealed class ProjectController : ControllerBase
     [ProducesResponseType(typeof(ResponseModel<ProjectModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseModel<>), StatusCodes.Status400BadRequest)]
     public async ValueTask<IActionResult> GetAll([FromQuery] PaginationParams @params)
-      => ResponseHandler.ReturnResponseList(await _projectRepository.GetAll(@params));
+      => ResponseHandler.ReturnIActionResponse(await _projectRepository.GetAll(@params));
 
     [HttpPost]
     [Authorize]

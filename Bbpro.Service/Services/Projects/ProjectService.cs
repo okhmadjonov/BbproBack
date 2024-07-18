@@ -2,6 +2,7 @@
 using Bbpro.Domain.Dto.Projects;
 using Bbpro.Domain.Entities.Projects;
 using Bbpro.Domain.Interface;
+using Bbpro.Domain.Models.PaginationParams;
 using Bbpro.Domain.Models.Projects;
 using Bbpro.Service.Exceptions;
 using Bbpro.Service.Extentions;
@@ -65,13 +66,61 @@ internal sealed class ProjectService : IProjectRepository
         await _projectRepository.SaveChangesAsync();
         return true;
     }
-
+    /*
     public async ValueTask<IEnumerable<ProjectModel>> GetAll(PaginationParams @params, Expression<Func<Project, bool>> expression = null)
     {
         var projects = _projectRepository.GetAll(expression: expression, isTracking: false)
              .OrderByDescending(e => e.Id); 
         var projectsList = await projects.ToPagedList(@params).ToListAsync();
         return projectsList.Select(e => new ProjectModel().MapFromEntity(e)).ToList();
+    }
+    */
+
+    public async ValueTask<PagedResult<ProjectModel>> GetAll(PaginationParams @params, Expression<Func<Project, bool>> expression = null)
+    {
+        var projects = _projectRepository.GetAll(expression: expression, isTracking: false)
+                                          .OrderByDescending(e => e.Id)
+                                          .AsQueryable();
+
+        var projectsList = await projects.ToPagedList(@params).ToListAsync();
+        var resultList = projectsList.Select(e => new ProjectModel().MapFromEntity(e)).ToList();
+
+        int totalCount = await projects.CountAsync();
+        if (totalCount == 0)
+        {
+            return PagedResult<ProjectModel>.Create(
+                Enumerable.Empty<ProjectModel>(),
+                0,
+                @params.PageSize,
+                0,
+                @params.PageIndex,
+                0
+            );
+        }
+
+        if (@params.PageIndex == 0)
+        {
+            @params.PageIndex = 1;
+        }
+
+        if (@params.PageSize == 0)
+        {
+            @params.PageSize = totalCount;
+        }
+
+        int itemsPerPage = @params.PageSize;
+        int totalPages = (totalCount / itemsPerPage) + (totalCount % itemsPerPage == 0 ? 0 : 1);
+
+        var pagedResult = PagedResult<ProjectModel>.Create(
+            resultList,
+            totalCount,
+            itemsPerPage,
+            resultList.Count,
+            @params.PageIndex,
+            totalPages
+        );
+
+        return pagedResult;
     }
 
     public async ValueTask<ProjectModel> GetAsync(Expression<Func<Project, bool>> expression)
