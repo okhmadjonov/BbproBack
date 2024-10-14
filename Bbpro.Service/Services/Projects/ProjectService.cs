@@ -20,30 +20,95 @@ internal sealed class ProjectService : IProjectRepository
         _projectRepository = projectRepositoriy;
     }
 
-    public async ValueTask<ProjectModel> CreateAsync(ProjectCreateDto project)
+    public async ValueTask<ProjectModel> CreateAsync(ProjectCreateDto projectCreateDTO)
     {
-        string fileName = Path.Combine("images", Guid.NewGuid().ToString("N") + Path.GetExtension(project.ImageUrl.FileName));
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
-        string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-        if (!Directory.Exists(directoryPath))
-            Directory.CreateDirectory(directoryPath);
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
+        string folderName = "";
+        string downloadLink = "";
+        string imageUrl = "";
+
+       
+        if (projectCreateDTO.DownloadLink != null && projectCreateDTO.DownloadLink.Length > 0)
         {
-            await project.ImageUrl.CopyToAsync(fileStream);
+            string templatesRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "templates");
+            if (!Directory.Exists(templatesRootPath))
+                Directory.CreateDirectory(templatesRootPath);
+
+            int folderCount = Directory.GetDirectories(templatesRootPath).Length + 1;
+            folderName = folderCount.ToString("D2");
+
+            string templatesPath = Path.Combine(templatesRootPath, folderName);
+            Directory.CreateDirectory(templatesPath);
+
+            using (var archive = new System.IO.Compression.ZipArchive(projectCreateDTO.DownloadLink.OpenReadStream()))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    string destinationPath = Path.Combine(templatesPath, entry.FullName);
+                    if (string.IsNullOrEmpty(entry.Name))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+                        continue;
+                    }
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+                    using (var fileStream = new FileStream(destinationPath, FileMode.Create))
+                    using (var entryStream = entry.Open())
+                    {
+                        await entryStream.CopyToAsync(fileStream);
+                    }
+                }
+            }
+
+            string indexPath = Path.Combine(templatesPath, "index.html");
+            if (File.Exists(indexPath))
+            {
+                downloadLink = $"/templates/{folderName}/index.html";
+            }
+            else
+            {
+                throw new BbproException(400, "index_file_not_found");
+            }
         }
+
+       
+        if (projectCreateDTO.ImageUrl != null && projectCreateDTO.ImageUrl.Length > 0)
+        {
+          
+            string fileName = Path.Combine("images", Guid.NewGuid().ToString("N") + Path.GetExtension(projectCreateDTO.ImageUrl.FileName));
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
+            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await projectCreateDTO.ImageUrl.CopyToAsync(fileStream);
+            }
+
+          
+            imageUrl = $"/images/{Path.GetFileName(fileName)}";
+        }
+
+       
         var addProject = new Project
         {
-            Title = project.Title,
-            Description = project.Description,
-            DownloadLink = project.DownloadLink,
-            ImageUrl = fileName,
+            Title = projectCreateDTO.Title,
+            Description = projectCreateDTO.Description,
+            DownloadLink = downloadLink, 
+            ImageUrl = imageUrl,          
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
+
         var createdProject = await _projectRepository.CreateAsync(addProject);
         await _projectRepository.SaveChangesAsync();
+
         return new ProjectModel().MapFromEntity(createdProject);
     }
+
+
 
     public async ValueTask<bool> DeleteAsync(int id)
     {
@@ -55,7 +120,7 @@ internal sealed class ProjectService : IProjectRepository
 
         if (!string.IsNullOrEmpty(findProject.ImageUrl))
         {
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", findProject.ImageUrl);
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", findProject.ImageUrl);
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
@@ -66,15 +131,7 @@ internal sealed class ProjectService : IProjectRepository
         await _projectRepository.SaveChangesAsync();
         return true;
     }
-    /*
-    public async ValueTask<IEnumerable<ProjectModel>> GetAll(PaginationParams @params, Expression<Func<Project, bool>> expression = null)
-    {
-        var projects = _projectRepository.GetAll(expression: expression, isTracking: false)
-             .OrderByDescending(e => e.Id); 
-        var projectsList = await projects.ToPagedList(@params).ToListAsync();
-        return projectsList.Select(e => new ProjectModel().MapFromEntity(e)).ToList();
-    }
-    */
+
 
     public async ValueTask<PagedResult<ProjectModel>> GetAll(PaginationParams @params, Expression<Func<Project, bool>> expression = null)
     {
@@ -155,23 +212,8 @@ internal sealed class ProjectService : IProjectRepository
                 existingProject.Title.EN = project.Title.EN;
             }
         }
-        
-        if (project.DownloadLink != null)
-        {
-            if (project.DownloadLink.UZ is not null)
-            {
-                existingProject.DownloadLink.UZ = project.DownloadLink.UZ;
-            }
-            if (project.DownloadLink.RU is not null)
-            {
-                existingProject.DownloadLink.RU = project.DownloadLink.RU;
-            }
-            if (project.DownloadLink.EN is not null)
-            {
-                existingProject.DownloadLink.EN = project.DownloadLink.EN;
-            }
-        }
-        
+
+        existingProject.DownloadLink = project.DownloadLink;
 
         if (project.Description != null)
         {

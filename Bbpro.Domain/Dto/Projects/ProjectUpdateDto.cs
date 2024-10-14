@@ -8,5 +8,5 @@ public class ProjectUpdateDto
     public IFormFile ImageUrl { get; set; }
     public Language Title { get; set; }
     public Language Description { get; set; }
-    public Language? DownloadLink { get; set; }
+    public string? DownloadLink { get; set; }
 }

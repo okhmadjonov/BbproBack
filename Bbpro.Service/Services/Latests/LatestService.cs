@@ -173,6 +173,7 @@ internal sealed class LatestService : ILatestRepository
             {
                 existingLatest.Description.EN = latest.Description.EN;
             }
+
         }
 
         existingLatest.UpdatedAt = DateTime.UtcNow;

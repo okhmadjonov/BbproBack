@@ -13,5 +13,5 @@ public class ProjectCreateDto
     [Required]
     public Language Description { get; set; }
 
-    public Language? DownloadLink { get; set; }
+    public IFormFile? DownloadLink { get; set; }
 }
