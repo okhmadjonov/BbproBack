@@ -1,11 +1,8 @@
 ﻿using Bbpro.Domain.Configurations;
-using Bbpro.Domain.Dto.Latests;
 using Bbpro.Domain.Dto.Projects;
-using Bbpro.Domain.Models.Latests;
 using Bbpro.Domain.Models.Projects;
 using Bbpro.Domain.Models.Response;
 using Bbpro.Service.Extentions;
-using Bbpro.Service.Interfaces.Latests;
 using Bbpro.Service.Interfaces.Projects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

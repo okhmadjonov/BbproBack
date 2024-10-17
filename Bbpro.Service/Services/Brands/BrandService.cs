@@ -61,12 +61,16 @@ public class BrandService : IBrandRepository
             throw new BbproException(404, "brand_not_found");
         }
 
-        foreach (var imageUrl in findBrand.ImageUrl)
+        if (findBrand.ImageUrl != null && findBrand.ImageUrl.Any())
         {
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imageUrl);
-            if (File.Exists(filePath))
+            foreach (var imageUrl in findBrand.ImageUrl)
             {
-                File.Delete(filePath);
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imageUrl);
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
             }
         }
 
@@ -74,6 +78,7 @@ public class BrandService : IBrandRepository
         await _brandRepository.SaveChangesAsync();
         return true;
     }
+
 
 
     public async ValueTask<IEnumerable<BrandModel>> GetAll(PaginationParams @params, Expression<Func<Brand, bool>> expression = null)

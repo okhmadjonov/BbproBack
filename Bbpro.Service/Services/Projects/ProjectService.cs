@@ -86,12 +86,8 @@ internal sealed class ProjectService : IProjectRepository
             {
                 await projectCreateDTO.ImageUrl.CopyToAsync(fileStream);
             }
-
-          
             imageUrl = $"/images/{Path.GetFileName(fileName)}";
         }
-
-       
         var addProject = new Project
         {
             Title = projectCreateDTO.Title,
@@ -107,28 +103,38 @@ internal sealed class ProjectService : IProjectRepository
 
         return new ProjectModel().MapFromEntity(createdProject);
     }
-
-
-
     public async ValueTask<bool> DeleteAsync(int id)
     {
         var findProject = await _projectRepository.GetAsync(p => p.Id == id);
-        if (findProject is null)
+        if (findProject == null)
         {
             throw new BbproException(404, "project_not_found");
         }
 
         if (!string.IsNullOrEmpty(findProject.ImageUrl))
         {
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", findProject.ImageUrl);
-            if (File.Exists(filePath))
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", findProject.ImageUrl);
+            if (File.Exists(imagePath))
             {
-                File.Delete(filePath);
+                File.Delete(imagePath);
             }
         }
 
-        await _projectRepository.DeleteAsync(id);
+        if (!string.IsNullOrEmpty(findProject.DownloadLink))
+        {
+            string folderName = Path.GetFileName(Path.GetDirectoryName(findProject.DownloadLink));
+
+            string templateFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "templates", folderName);
+
+            if (Directory.Exists(templateFolderPath))
+            {
+                Directory.Delete(templateFolderPath, true);
+            }
+        }
+
+        await _projectRepository.DeleteAsync(findProject.Id);
         await _projectRepository.SaveChangesAsync();
+
         return true;
     }
 
